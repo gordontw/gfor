@@ -1,0 +1,24 @@
+group1: 
+  check:    tcp
+  port:     443
+  method:   roundrobin
+  host:     [172.21.17.60,172.21.17.61]
+
+group2:
+  check:    tcp
+  port:     80
+  method:   weight
+  host:     [172.21.17.58,172.21.17.59]
+  weight:   [2,1]
+
+group3:
+  check:    https #http/https
+  port:     443
+  path:     /ok.html
+  method:   failover
+  host:     [172.21.17.60,172.21.17.61]
+  timeout:  3
+
+group4:
+  check:    ping
+  host:     [172.21.17.60,172.21.17.61]
