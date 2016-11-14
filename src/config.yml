@@ -1,24 +1,34 @@
 group1: 
   check:    tcp
   port:     443
-  method:   roundrobin
-  host:     [172.21.17.60,172.21.17.61]
+  method:   random
+  host: 
+    node1:  172.21.17.60
+    node2:  172.21.17.61
 
 group2:
   check:    tcp
   port:     80
   method:   weight
-  host:     [172.21.17.58,172.21.17.59]
-  weight:   [2,1]
+  host:
+    node58: 172.21.17.58
+    node59: 172.21.17.59
+  weight:
+    node58: 1
+    node59: 1
 
 group3:
-  check:    https #http/https
+  check:    https #http/https cehck uri
   port:     443
-  path:     /ok.html
+  uri:      /ok.html
   method:   failover
-  host:     [172.21.17.60,172.21.17.61]
+  host:
+    node1:  172.21.17.60
+    node2:  172.21.17.61
   timeout:  3
 
 group4:
   check:    ping
-  host:     [172.21.17.60,172.21.17.61]
+  host:
+    host1:  172.21.17.60
+    host2:  172.21.17.61
