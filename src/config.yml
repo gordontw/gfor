@@ -25,11 +25,13 @@ group3:
   host:
     node1:  172.21.17.60
     node2:  172.21.17.61
-  order:    [node1, node2]
-  timeout:  3000 #minisecond
+    node3:  tw.yahoo.com
+  order:    [node1, node2, node3]
+  timeout:  3000 #millisecond
 
 group4:
   check:    ping
   host:
-    host1:  172.21.17.60
+    host1:  tw.yahoo.com
     host2:  172.21.17.61
+  timeout:  5000 #minisecond

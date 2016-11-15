@@ -98,9 +98,7 @@ func getFoHost() string {
 	if s := len(myHost); s > 0 {
 		for i := 0; i < len(myServ.order); i++ {
 			hostIdentify = myServ.order[i]
-			host = myHost[hostIdentify]
-			if isHealth(myServ, host) == true {
-				hostIdentify = myServ.order[i]
+			if isHealth(myServ, myHost[hostIdentify]) == true {
 				return myHost[myServ.order[i]]
 			}
 		}

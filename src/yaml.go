@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
@@ -12,7 +13,7 @@ type Service struct {
 	uri     string
 	port    int
 	order   []string
-	timeout int // minisecond
+	timeout int // millisecond
 }
 
 var (
@@ -31,13 +32,14 @@ func ParseYML(yamlfile string) {
 
 	myHost = make(map[string]string)
 	myWeight = make(map[string]int)
-	myServ.timeout = 1000 //default 1 sec
+	myServ.method = "random" //default "random"
+	myServ.timeout = 1000    //default 1 sec
 	for k, v := range any {
 		if k == Group[0] {
 			flatten(k, v, myServ)
 		}
 	}
-	debug("myServ=>%#v\n", myServ)
+	fmt.Printf("myServ=>%#v\n", myServ)
 	debug("myHost=>%v\n", myHost)
 	debug("myWeight=>%v\n", myWeight)
 }
