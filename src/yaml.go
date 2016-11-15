@@ -12,7 +12,7 @@ type Service struct {
 	uri     string
 	port    int
 	order   []string
-	timeout int
+	timeout int // minisecond
 }
 
 var (
@@ -31,6 +31,7 @@ func ParseYML(yamlfile string) {
 
 	myHost = make(map[string]string)
 	myWeight = make(map[string]int)
+	myServ.timeout = 1000 //default 1 sec
 	for k, v := range any {
 		if k == Group[0] {
 			flatten(k, v, myServ)

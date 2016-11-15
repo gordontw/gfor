@@ -17,7 +17,7 @@ var (
 
 func init() {
 	flag.BoolVar(&DebugMode, "d", false, "Debug mode")
-	flag.StringVar(&ConfigDir, "c", defDir, "Debug mode")
+	flag.StringVar(&ConfigDir, "c", defDir, "YAML directory")
 }
 
 func debug(msg string, input ...interface{}) {

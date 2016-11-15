@@ -3,8 +3,8 @@ group1:
   port:     443
   method:   random
   host: 
-    node1:  172.21.17.60
-    node2:  172.21.17.61
+    node1:  tw.yahoo.com
+    node2:  google.com
 
 group2:
   check:    tcp
@@ -26,7 +26,7 @@ group3:
     node1:  172.21.17.60
     node2:  172.21.17.61
   order:    [node1, node2]
-  timeout:  3
+  timeout:  3000 #minisecond
 
 group4:
   check:    ping
