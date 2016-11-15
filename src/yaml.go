@@ -1,11 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
-	//"reflect"
 )
 
 type Service struct {
@@ -13,6 +11,7 @@ type Service struct {
 	method  string // random|weight|failover - default "random"
 	uri     string
 	port    int
+	order   []string
 	timeout int
 }
 
@@ -37,7 +36,7 @@ func ParseYML(yamlfile string) {
 			flatten(k, v, myServ)
 		}
 	}
-	fmt.Printf("myServ=>%#v\n", myServ)
+	debug("myServ=>%#v\n", myServ)
 	debug("myHost=>%v\n", myHost)
 	debug("myWeight=>%v\n", myWeight)
 }
@@ -58,11 +57,22 @@ func flatten(prefix string, value interface{}, myServ *Service) {
 				myServ.method = v.(string)
 			case "timeout":
 				myServ.timeout = v.(int)
+			case "order":
+				orderAssign(v)
 			case "host":
 				nodeAssign(k.(string), v)
 			case "weight":
 				nodeAssign(k.(string), v)
 			}
+		}
+	}
+}
+
+func orderAssign(value interface{}) {
+	order, ok := value.([]interface{})
+	if ok {
+		for _, v := range order {
+			myServ.order = append(myServ.order, v.(string))
 		}
 	}
 }

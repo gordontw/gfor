@@ -78,3 +78,18 @@ func getWeightHost() string {
 	}
 	return host
 }
+
+func getFoHost() string {
+	host := Group[0]
+	if s := len(myHost); s > 0 {
+		for i := 0; i < len(myServ.order); i++ {
+			hostIdentify = myServ.order[i]
+			host = myHost[hostIdentify]
+			if isHealth(myServ, host) {
+				hostIdentify = myServ.order[i]
+				return myHost[myServ.order[i]]
+			}
+		}
+	}
+	return host
+}

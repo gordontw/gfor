@@ -25,6 +25,7 @@ group3:
   host:
     node1:  172.21.17.60
     node2:  172.21.17.61
+  order:    [node1, node2]
   timeout:  3
 
 group4:

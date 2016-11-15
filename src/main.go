@@ -22,7 +22,7 @@ func init() {
 
 func debug(msg string, input ...interface{}) {
 	if DebugMode {
-		fmt.Printf(msg, input)
+		fmt.Printf("DEBUG: "+msg, input)
 	}
 }
 
@@ -49,11 +49,12 @@ func main() {
 	case "random":
 		gohost = getRandomHost()
 	case "failover":
+		gohost = getFoHost()
 	case "weight":
 		gohost = getWeightHost()
 	default:
 		gohost = getRandomHost()
 	}
 
-	fmt.Printf("HOST(%s)=>%s\n", Group[0], gohost)
+	colorMsg(fmt.Sprintf("HOST(%s)=>%s\n", Group[0], gohost), color.FgHiGreen)
 }
