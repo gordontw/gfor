@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"os"
 	"path"
+	"strconv"
 	"time"
 )
 
@@ -42,22 +43,27 @@ func readConfigDir(dir string) {
 func getRandomHost() string {
 	host := Group[0]
 NEXT:
-	if s := len(myHost); s > 0 {
-		rand.Seed(time.Now().UnixNano())
-		x := rand.Intn(s)
-		cnt := 0
-		for k, v := range myHost {
-			if cnt == x {
-				hostIdentify = k
-				if isHealth(myServ, myHost[hostIdentify]) == true {
-					host = v
-					return host
-				}
-				delete(myHost, hostIdentify)
-				goto NEXT
+	s := len(myHost)
+	if s <= 0 {
+		return host
+	}
+	rand.Seed(time.Now().UnixNano())
+	x := rand.Intn(s)
+	cnt := 0
+	for k, v := range myHost {
+		if cnt == x {
+			hostIdentify = k
+			if cacheHost(Group[0], v) {
+				return v
 			}
-			cnt++
+			if isHealth(myServ, v) == true {
+				updateHostStatus(Group[0], v, fmt.Sprintf("%d", int32(time.Now().Unix())))
+				return v
+			}
+			delete(myHost, hostIdentify)
+			goto NEXT
 		}
+		cnt++
 	}
 	return host
 }
@@ -65,28 +71,34 @@ NEXT:
 func getWeightHost() string {
 	host := Group[0]
 NEXT:
-	if s := len(myHost); s > 0 {
-		// get total weight
-		totalweight := 0
-		for _, v := range myWeight {
-			totalweight += v
-		}
-		if totalweight > 0 {
-			// get wight
-			weight := 0
-			rand.Seed(time.Now().UnixNano())
-			x := rand.Intn(s)
-			for k, v := range myWeight {
-				weight += v
-				if x < weight {
-					hostIdentify = k
-					if isHealth(myServ, myHost[hostIdentify]) == true {
-						return myHost[hostIdentify]
-					}
-					delete(myHost, hostIdentify)
-					delete(myWeight, hostIdentify)
-					goto NEXT
+	s := len(myHost)
+	if s <= 0 {
+		return host
+	}
+	// get total weight
+	totalweight := 0
+	for _, v := range myWeight {
+		totalweight += v
+	}
+	if totalweight > 0 {
+		// get wight
+		weight := 0
+		rand.Seed(time.Now().UnixNano())
+		x := rand.Intn(s)
+		for k, v := range myWeight {
+			weight += v
+			if x < weight {
+				hostIdentify = k
+				if cacheHost(Group[0], myHost[hostIdentify]) {
+					return myHost[hostIdentify]
 				}
+				if isHealth(myServ, myHost[hostIdentify]) == true {
+					updateHostStatus(Group[0], myHost[hostIdentify], fmt.Sprintf("%d", int32(time.Now().Unix())))
+					return myHost[hostIdentify]
+				}
+				delete(myHost, hostIdentify)
+				delete(myWeight, hostIdentify)
+				goto NEXT
 			}
 		}
 	}
@@ -95,13 +107,31 @@ NEXT:
 
 func getFoHost() string {
 	host := Group[0]
-	if s := len(myHost); s > 0 {
-		for i := 0; i < len(myServ.order); i++ {
-			hostIdentify = myServ.order[i]
-			if isHealth(myServ, myHost[hostIdentify]) == true {
-				return myHost[myServ.order[i]]
-			}
+	if s := len(myHost); s <= 0 {
+		return host
+	}
+	for i := 0; i < len(myServ.order); i++ {
+		hostIdentify = myServ.order[i]
+		if cacheHost(Group[0], myHost[hostIdentify]) {
+			return myHost[hostIdentify]
+		}
+		if isHealth(myServ, myHost[hostIdentify]) == true {
+			updateHostStatus(Group[0], myHost[hostIdentify], fmt.Sprintf("%d", int32(time.Now().Unix())))
+			return myHost[hostIdentify]
 		}
 	}
 	return host
+}
+
+func cacheHost(group string, host string) bool {
+	if noCache {
+		return false
+	}
+	nowtime := int32(time.Now().Unix())
+	cache, _ := strconv.ParseInt(getHostStatus(group, host), 10, 32)
+	cachetime := int32(cache)
+	if nowtime-cachetime > 600 {
+		return false
+	}
+	return true
 }

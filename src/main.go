@@ -11,12 +11,14 @@ var (
 	gohost    string
 	Group     []string
 	DebugMode bool
+	noCache   bool
 	ConfigDir string
 	defDir    = "."
 )
 
 func init() {
 	flag.BoolVar(&DebugMode, "d", false, "Debug mode")
+	flag.BoolVar(&noCache, "nocache", false, "Cache mode [default Cached]")
 	flag.StringVar(&ConfigDir, "c", defDir, "YAML directory")
 }
 

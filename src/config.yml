@@ -18,15 +18,14 @@ group2:
     node59: 1
 
 group3:
-  check:    https #http/https cehck uri
-  port:     443
+  check:    http #http/https cehck uri
   uri:      /ok.html
   method:   failover
   host:
     node1:  172.21.17.60
     node2:  172.21.17.61
     node3:  tw.yahoo.com
-  order:    [node1, node2, node3]
+  order:    [node1, node3]
   timeout:  3000 #millisecond
 
 group4:
