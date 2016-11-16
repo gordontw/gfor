@@ -130,8 +130,9 @@ func cacheHost(group string, host string) bool {
 	nowtime := int32(time.Now().Unix())
 	cache, _ := strconv.ParseInt(getHostStatus(group, host), 10, 32)
 	cachetime := int32(cache)
-	if nowtime-cachetime > 600 {
+	if nowtime-cachetime > 600 { // host status cache time
 		return false
 	}
+	debug("Cached!(%v)\n", group, host)
 	return true
 }

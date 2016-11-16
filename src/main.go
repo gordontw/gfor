@@ -37,11 +37,15 @@ func colorMsg(msg string, c color.Attribute) {
 func main() {
 	flag.Parse()
 	Group = flag.Args()
-	debug("GROUP=>%v\n", Group)
+	if len(Group) == 0 {
+		flag.PrintDefaults()
+		os.Exit(0)
+	}
 	if len(Group) > 1 {
 		colorMsg("ERROR:too many args..\n", color.FgHiRed)
-		os.Exit(1)
+		os.Exit(0)
 	}
+	debug("GROUP=>%v\n", Group)
 
 	// work thru ConfigDir
 	readConfigDir(ConfigDir)

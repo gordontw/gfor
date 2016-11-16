@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
@@ -39,7 +38,7 @@ func ParseYML(yamlfile string) {
 			flatten(k, v, myServ)
 		}
 	}
-	fmt.Printf("myServ=>%#v\n", myServ)
+	debug("myServ=>%#v\n", myServ)
 	debug("myHost=>%v\n", myHost)
 	debug("myWeight=>%v\n", myWeight)
 }
