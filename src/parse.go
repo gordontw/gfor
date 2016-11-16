@@ -14,7 +14,7 @@ var (
 	hostIdentify string
 )
 
-func readConfigDir(dir string) {
+func readConfigDir(dir string, group string) {
 	files, err := ioutil.ReadDir(dir)
 	if err != nil {
 		fmt.Printf(err.Error())
@@ -29,19 +29,19 @@ func readConfigDir(dir string) {
 		finfo, _ := os.Stat(file)
 		switch mode := finfo.Mode(); {
 		case mode.IsDir(): //directory
-			readConfigDir(file)
+			readConfigDir(file, group)
 		case mode.IsRegular(): //file
 			ext := path.Ext(file) //file extension
 			if ext != ".yml" && ext != ".yaml" {
 				continue
 			}
-			ParseYML(file)
+			ParseYML(file, group)
 		}
 	}
 }
 
-func getRandomHost() string {
-	host := Group[0]
+func getRandomHost(group string) string {
+	host := group
 NEXT:
 	s := len(myHost)
 	if s <= 0 {
@@ -53,11 +53,11 @@ NEXT:
 	for k, v := range myHost {
 		if cnt == x {
 			hostIdentify = k
-			if cacheHost(Group[0], v) {
+			if cacheHost(group, v) {
 				return v
 			}
 			if isHealth(myServ, v) == true {
-				updateHostStatus(Group[0], v, fmt.Sprintf("%d", int32(time.Now().Unix())))
+				updateHostStatus(group, v, fmt.Sprintf("%d", int32(time.Now().Unix())))
 				return v
 			}
 			delete(myHost, hostIdentify)
@@ -68,8 +68,8 @@ NEXT:
 	return host
 }
 
-func getWeightHost() string {
-	host := Group[0]
+func getWeightHost(group string) string {
+	host := group
 NEXT:
 	s := len(myHost)
 	if s <= 0 {
@@ -89,11 +89,11 @@ NEXT:
 			weight += v
 			if x < weight {
 				hostIdentify = k
-				if cacheHost(Group[0], myHost[hostIdentify]) {
+				if cacheHost(group, myHost[hostIdentify]) {
 					return myHost[hostIdentify]
 				}
 				if isHealth(myServ, myHost[hostIdentify]) == true {
-					updateHostStatus(Group[0], myHost[hostIdentify], fmt.Sprintf("%d", int32(time.Now().Unix())))
+					updateHostStatus(group, myHost[hostIdentify], fmt.Sprintf("%d", int32(time.Now().Unix())))
 					return myHost[hostIdentify]
 				}
 				delete(myHost, hostIdentify)
@@ -105,18 +105,18 @@ NEXT:
 	return host
 }
 
-func getFoHost() string {
-	host := Group[0]
+func getFoHost(group string) string {
+	host := group
 	if s := len(myHost); s <= 0 {
 		return host
 	}
 	for i := 0; i < len(myServ.order); i++ {
 		hostIdentify = myServ.order[i]
-		if cacheHost(Group[0], myHost[hostIdentify]) {
+		if cacheHost(group, myHost[hostIdentify]) {
 			return myHost[hostIdentify]
 		}
 		if isHealth(myServ, myHost[hostIdentify]) == true {
-			updateHostStatus(Group[0], myHost[hostIdentify], fmt.Sprintf("%d", int32(time.Now().Unix())))
+			updateHostStatus(group, myHost[hostIdentify], fmt.Sprintf("%d", int32(time.Now().Unix())))
 			return myHost[hostIdentify]
 		}
 	}

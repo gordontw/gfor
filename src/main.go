@@ -34,6 +34,23 @@ func colorMsg(msg string, c color.Attribute) {
 	color.Unset()
 }
 
+func getGroupHost(group string) string {
+	readConfigDir(ConfigDir, group)
+
+	gohost = group
+	switch myServ.method {
+	case "random":
+		gohost = getRandomHost(group)
+	case "failover":
+		gohost = getFoHost(group)
+	case "weight":
+		gohost = getWeightHost(group)
+	default:
+		gohost = getRandomHost(group)
+	}
+	return gohost
+}
+
 func main() {
 	flag.Parse()
 	Group = flag.Args()
@@ -47,20 +64,6 @@ func main() {
 	}
 	debug("GROUP=>%v\n", Group)
 
-	// work thru ConfigDir
-	readConfigDir(ConfigDir)
-
-	gohost = Group[0]
-	switch myServ.method {
-	case "random":
-		gohost = getRandomHost()
-	case "failover":
-		gohost = getFoHost()
-	case "weight":
-		gohost = getWeightHost()
-	default:
-		gohost = getRandomHost()
-	}
-
+	gohost = getGroupHost(Group[0])
 	colorMsg(fmt.Sprintf("HOST(%s)=>%s\n", Group[0], gohost), color.FgHiGreen)
 }

@@ -21,7 +21,7 @@ var (
 	myWeight map[string]int
 )
 
-func ParseYML(yamlfile string) {
+func ParseYML(yamlfile string, group string) {
 	yamlFile, _ := ioutil.ReadFile(yamlfile)
 	any := map[string]interface{}{}
 	err := yaml.Unmarshal(yamlFile, &any)
@@ -34,7 +34,7 @@ func ParseYML(yamlfile string) {
 	myServ.method = "random" //default "random"
 	myServ.timeout = 1000    //default 1 sec
 	for k, v := range any {
-		if k == Group[0] {
+		if k == group {
 			flatten(k, v, myServ)
 		}
 	}
