@@ -15,7 +15,7 @@ gfor - Go HOST
 ```
 ###DEMO
 - [yaml example](src/config.yml)
-![demo](gfor_demo.gif)
+- ![demo](gfor_demo.gif)
 
 ###PHP Extension
 - set extension shard object
