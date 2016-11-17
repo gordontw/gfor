@@ -16,6 +16,10 @@ var (
 )
 
 func readConfigDir(dir string, group string) {
+	_, err := os.OpenFile(dir, os.O_RDONLY, 0666)
+	if err != nil {
+		return
+	}
 	fio, _ := os.Stat(dir)
 	if fio.Mode().IsDir() {
 		files, err := ioutil.ReadDir(dir)
