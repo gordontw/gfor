@@ -61,5 +61,5 @@ func icmpCheck(host string) bool {
 		//colorMsg("FAIL: "+err.Error()+"\n", color.FgHiRed)
 		return false
 	}
-	return true
+	return false
 }
