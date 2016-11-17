@@ -13,6 +13,11 @@ gfor - Go HOST
 -check
     Health Check, will not get host [default false]
 ```
+###Makefile
+- make all
+   - make exec
+   - make phpext
+
 ###DEMO
 - [yaml example](src/config.yml)
 - ![demo](gfor_demo.gif)
@@ -35,5 +40,9 @@ curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 $head = curl_exec($ch); 
 ?>
 ```
+
+###Notice
+- ping method not work
+   - ip4:icmp is a raw socket and so does require root privs. 
 
 Author: Gordon Wang <gordon.tw@gmail.com>
