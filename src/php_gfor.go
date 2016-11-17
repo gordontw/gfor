@@ -4,8 +4,11 @@ import "math/rand"
 import "time"
 import "github.com/kitech/php-go/phpgo"
 
-func gfor_host(group string) string {
-	return getGroupHost(group)
+func gfor_host(group string, conf string) string {
+	return getGroupHost(group, conf)
+}
+func gfor_health(group string, conf string) {
+	groupHealthCheck(group, conf)
 }
 
 func module_startup(ptype int, module_number int) int {
@@ -33,4 +36,5 @@ func init() {
 	phpgo.RegisterInitFunctions(module_startup, module_shutdown, request_startup, request_shutdown)
 
 	phpgo.AddFunc("gfor_host", gfor_host)
+	phpgo.AddFunc("gfor_health", gfor_health)
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/fatih/color"
 	"io/ioutil"
 	"math/rand"
 	"os"
@@ -15,28 +16,36 @@ var (
 )
 
 func readConfigDir(dir string, group string) {
-	files, err := ioutil.ReadDir(dir)
-	if err != nil {
-		fmt.Printf(err.Error())
-		os.Exit(0)
-	}
-
-	for _, f := range files {
-		if fmt.Sprintf("%c", f.Name()[0]) == "." {
-			continue
+	fio, _ := os.Stat(dir)
+	if fio.Mode().IsDir() {
+		files, err := ioutil.ReadDir(dir)
+		if err != nil {
+			fmt.Printf(err.Error())
+			os.Exit(0)
 		}
-		file := fmt.Sprintf("%s/%s", dir, f.Name())
-		finfo, _ := os.Stat(file)
-		switch mode := finfo.Mode(); {
-		case mode.IsDir(): //directory
-			readConfigDir(file, group)
-		case mode.IsRegular(): //file
-			ext := path.Ext(file) //file extension
-			if ext != ".yml" && ext != ".yaml" {
+		for _, f := range files {
+			if fmt.Sprintf("%c", f.Name()[0]) == "." {
 				continue
 			}
-			ParseYML(file, group)
+			file := fmt.Sprintf("%s/%s", dir, f.Name())
+			finfo, _ := os.Stat(file)
+			switch mode := finfo.Mode(); {
+			case mode.IsDir(): //directory
+				defer readConfigDir(file, group)
+			case mode.IsRegular(): //file
+				ext := path.Ext(file) //file extension
+				if ext != ".yml" && ext != ".yaml" {
+					continue
+				}
+				ParseYML(file, group)
+			}
 		}
+	} else if fio.Mode().IsRegular() {
+		ext := path.Ext(dir) //file extension
+		if ext != ".yml" && ext != ".yaml" {
+			return
+		}
+		ParseYML(dir, group)
 	}
 }
 
@@ -57,7 +66,7 @@ NEXT:
 				return v
 			}
 			if isHealth(myServ, v) == true {
-				updateHostStatus(group, v, fmt.Sprintf("%d", int32(time.Now().Unix())))
+				go updateHostStatus(group, v, fmt.Sprintf("%d", int32(time.Now().Unix())))
 				return v
 			}
 			delete(myHost, hostIdentify)
@@ -93,7 +102,7 @@ NEXT:
 					return myHost[hostIdentify]
 				}
 				if isHealth(myServ, myHost[hostIdentify]) == true {
-					updateHostStatus(group, myHost[hostIdentify], fmt.Sprintf("%d", int32(time.Now().Unix())))
+					go updateHostStatus(group, myHost[hostIdentify], fmt.Sprintf("%d", int32(time.Now().Unix())))
 					return myHost[hostIdentify]
 				}
 				delete(myHost, hostIdentify)
@@ -116,11 +125,25 @@ func getFoHost(group string) string {
 			return myHost[hostIdentify]
 		}
 		if isHealth(myServ, myHost[hostIdentify]) == true {
-			updateHostStatus(group, myHost[hostIdentify], fmt.Sprintf("%d", int32(time.Now().Unix())))
+			go updateHostStatus(group, myHost[hostIdentify], fmt.Sprintf("%d", int32(time.Now().Unix())))
 			return myHost[hostIdentify]
 		}
 	}
 	return host
+}
+
+func doHealthCheck(group string) {
+	for node, host := range myHost {
+		stime := time.Now().UnixNano() / int64(time.Millisecond)
+		status := isHealth(myServ, host)
+		etime := time.Now().UnixNano() / int64(time.Millisecond)
+		if status {
+			colorMsg(fmt.Sprintf("%dms\t%s\t%s\n", etime-stime, node, host), color.FgHiGreen)
+			go updateHostStatus(group, host, fmt.Sprintf("%d", int32(time.Now().Unix())))
+		} else {
+			colorMsg(fmt.Sprintf("---\t%s\t%s\n", node, host), color.FgHiRed)
+		}
+	}
 }
 
 func cacheHost(group string, host string) bool {

@@ -30,7 +30,8 @@ func netCheck(network string, host string, port int, timeout int) bool {
 	addr := fmt.Sprintf("%s:%d", host, port)
 	_, err := net.DialTimeout(network, addr, time.Duration(timeout*1000000))
 	if err != nil {
-		colorMsg("FAIL: "+err.Error()+"\n", color.FgHiRed)
+		debug("FAIL: " + err.Error() + "\n")
+		//colorMsg("FAIL: "+err.Error()+"\n", color.FgHiRed)
 		return false
 	}
 	return true
@@ -46,7 +47,8 @@ func httpCheck(network string, host string, port int, uri string, timeout int) b
 	}
 	_, err := client.Get(url)
 	if err != nil {
-		colorMsg("FAIL: "+err.Error()+"\n", color.FgHiRed)
+		debug("FAIL: " + err.Error() + "\n")
+		//colorMsg("FAIL: "+err.Error()+"\n", color.FgHiRed)
 		return false
 	}
 	return true
@@ -55,7 +57,8 @@ func httpCheck(network string, host string, port int, uri string, timeout int) b
 func icmpCheck(host string) bool {
 	_, err := net.Dial("ip4:icmp", host)
 	if err != nil {
-		colorMsg("FAIL: "+err.Error()+"\n", color.FgHiRed)
+		debug("FAIL: " + err.Error() + "\n")
+		//colorMsg("FAIL: "+err.Error()+"\n", color.FgHiRed)
 		return false
 	}
 	return true
