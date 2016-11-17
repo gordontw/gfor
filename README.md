@@ -26,5 +26,14 @@ host = gfor_host($group, $conf)
 gfor_health($group, $conf)
 ?>
 ```
+```
+<?php
+$ch = curl_init(); 
+curl_setopt($ch, CURLOPT_URL, "http://"+gfor_host($ApiGroup, $conf)+"/"+$uri); 
+curl_setopt($ch, CURLOPT_HEADER, TRUE); 
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE); 
+$head = curl_exec($ch); 
+?>
+```
 
 Author: Gordon Wang <gordon.tw@gmail.com>
