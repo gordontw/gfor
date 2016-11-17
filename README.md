@@ -14,6 +14,7 @@ gfor - Go HOST
     Health Check, will not get host [default false]
 ```
 ###DEMO
+- [yaml example](src/config.yml)
 ![demo](gfor_demo.gif)
 
 ###PHP Extension
